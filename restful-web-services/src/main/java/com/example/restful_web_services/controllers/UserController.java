@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +22,8 @@ import com.example.restful_web_services.dtos.UserDto;
 import com.example.restful_web_services.entities.User;
 
 import jakarta.validation.Valid;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 public class UserController {
@@ -38,8 +42,15 @@ public class UserController {
 	}
 	
 	@GetMapping("/users/{id}")
-	ResponseEntity<Optional<User>>getUserById(@PathVariable long id ){
-		return new ResponseEntity<>(userService.getUserById(id),HttpStatus.OK);
+	ResponseEntity<EntityModel<Optional<User>>>getUserById(@PathVariable long id ){
+		
+		Optional<User> user = userService.getUserById(id);
+		
+		EntityModel<Optional<User>> entityModel = EntityModel.of(user);  // create an entity model to add links to the response
+		WebMvcLinkBuilder link = linkTo(methodOn(this.getClass()).getUsers());  // create a link to the getUsers method
+		entityModel.add(link.withRel("all-users")); // add the link to the entity model
+		
+		return new ResponseEntity<>(entityModel,HttpStatus.OK);
 	}
 	
 	@PostMapping("/users")

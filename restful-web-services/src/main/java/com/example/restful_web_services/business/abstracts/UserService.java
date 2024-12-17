@@ -3,6 +3,8 @@ package com.example.restful_web_services.business.abstracts;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.hateoas.EntityModel;
+
 import com.example.restful_web_services.dtos.UserDto;
 import com.example.restful_web_services.entities.User;
 
